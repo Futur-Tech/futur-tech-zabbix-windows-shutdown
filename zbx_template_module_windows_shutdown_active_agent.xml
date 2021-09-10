@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-09-10T11:09:48Z</date>
+    <date>2021-09-10T17:26:46Z</date>
     <groups>
         <group>
             <name>Templates/Futur-Tech/Modules Windows</name>
@@ -9,8 +9,8 @@
     </groups>
     <templates>
         <template>
-            <template>Template Futur-Tech Module Windows Shutdown</template>
-            <name>Template Futur-Tech Module Windows Shutdown</name>
+            <template>Template Futur-Tech Module Windows shutdown</template>
+            <name>Template Futur-Tech Module Windows shutdown</name>
             <description>https://github.com/Futur-Tech/futur-tech-zabbix-windows-shutdown</description>
             <groups>
                 <group>
