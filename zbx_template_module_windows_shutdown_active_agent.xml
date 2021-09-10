@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-09-10T11:09:48Z</date>
+    <groups>
+        <group>
+            <name>Templates/Futur-Tech/Modules Windows</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Futur-Tech Module Windows Shutdown</template>
+            <name>Template Futur-Tech Module Windows Shutdown</name>
+            <description>https://github.com/Futur-Tech/futur-tech-zabbix-windows-shutdown</description>
+            <groups>
+                <group>
+                    <name>Templates/Futur-Tech/Modules Windows</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Status</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Shutdown Event Log</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[System,,,,^(1074|6006|6008)$,,skip]</key>
+                    <delay>30m</delay>
+                    <history>365d</history>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{logeventid(6008)}=1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{logeventid(6006)}=1</recovery_expression>
+                            <name>Windows shutdown was dirty/improper</name>
+                            <opdata>{{ITEM.VALUE}.regsub(&quot;([\s\S]*)&quot;, \1)}</opdata>
+                            <priority>HIGH</priority>
+                            <description>You can manually close this problem or wait the next proper shutdown.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>
