@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-09-10T17:26:46Z</date>
+    <date>2022-02-08T10:37:14Z</date>
     <groups>
         <group>
             <name>Templates/Futur-Tech/Modules Windows</name>
@@ -26,7 +26,7 @@
                 <item>
                     <name>Shutdown Event Log</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>eventlog[System,,,,^(1074|6006|6008)$,,skip]</key>
+                    <key>eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip]</key>
                     <delay>30m</delay>
                     <history>365d</history>
                     <trends>0</trends>
@@ -38,14 +38,33 @@
                     </applications>
                     <triggers>
                         <trigger>
-                            <expression>{logeventid(6008)}=1</expression>
+                            <expression>{logeventid(41)}=1</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
                             <recovery_expression>{logeventid(6006)}=1</recovery_expression>
                             <name>Windows shutdown was dirty/improper</name>
                             <opdata>{{ITEM.VALUE}.regsub(&quot;([\s\S]*)&quot;, \1)}</opdata>
                             <priority>HIGH</priority>
-                            <description>You can manually close this problem or wait the next proper shutdown.</description>
+                            <description>Windows could not properly shutdown, this can lead to system corruption if repeated.&#13;
+You can manually close this problem or wait the next proper shutdown.</description>
                             <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
+                            <expression>{logeventid(6008)}=1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{logeventid(6006)}=1</recovery_expression>
+                            <name>Windows shutdown was unexpected</name>
+                            <opdata>{{ITEM.VALUE}.regsub(&quot;([\s\S]*)&quot;, \1)}</opdata>
+                            <priority>AVERAGE</priority>
+                            <description>Not expected is not the same as not completed!&#13;
+You can manually close this problem or wait the next proper shutdown.</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>Windows shutdown was dirty/improper</name>
+                                    <expression>{Template Futur-Tech Module Windows shutdown:eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip].logeventid(41)}=1</expression>
+                                    <recovery_expression>{Template Futur-Tech Module Windows shutdown:eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip].logeventid(6006)}=1</recovery_expression>
+                                </dependency>
+                            </dependencies>
                         </trigger>
                     </triggers>
                 </item>
