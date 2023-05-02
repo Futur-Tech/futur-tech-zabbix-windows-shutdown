@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-02-08T10:37:14Z</date>
+    <date>2023-05-02T09:50:16Z</date>
     <groups>
         <group>
             <name>Templates/Futur-Tech/Modules Windows</name>
@@ -38,12 +38,24 @@
                     </applications>
                     <triggers>
                         <trigger>
+                            <expression>{logeventid(29)}=1 and {logseverity()}=4</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{logeventid(6006)}=1</recovery_expression>
+                            <name>Windows Fast Startup issue detected in EventLog</name>
+                            <opdata>{{ITEM.VALUE}.regsub(&quot;([\s\S]*)&quot;, \1)}</opdata>
+                            <priority>HIGH</priority>
+                            <description>Windows might not properly shutdown, this can lead to system corruption if repeated.&#13;
+Make sure your Windows drivers/BIOS are up-to-date or turn off Fast Startup.&#13;
+You can manually close this problem or wait the next proper shutdown.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
                             <expression>{logeventid(41)}=1</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
                             <recovery_expression>{logeventid(6006)}=1</recovery_expression>
                             <name>Windows shutdown was dirty/improper</name>
                             <opdata>{{ITEM.VALUE}.regsub(&quot;([\s\S]*)&quot;, \1)}</opdata>
-                            <priority>HIGH</priority>
+                            <priority>AVERAGE</priority>
                             <description>Windows could not properly shutdown, this can lead to system corruption if repeated.&#13;
 You can manually close this problem or wait the next proper shutdown.</description>
                             <manual_close>YES</manual_close>
