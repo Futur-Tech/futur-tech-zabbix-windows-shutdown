@@ -1,0 +1,66 @@
+zabbix_export:
+  version: '6.0'
+  date: '2023-08-03T18:24:09Z'
+  groups:
+    - uuid: 0c9841271ce24c7882314d02deb588c2
+      name: 'Templates/Futur-Tech/Modules Windows'
+  templates:
+    - uuid: 868698fc48b14be7bfe97c457073d631
+      template: 'Futur-Tech Module Windows shutdown'
+      name: 'Futur-Tech Module Windows shutdown'
+      description: 'https://github.com/Futur-Tech/futur-tech-zabbix-windows-shutdown'
+      groups:
+        - name: 'Templates/Futur-Tech/Modules Windows'
+      items:
+        - uuid: 847cd566d18a4bb9b55ad782da5fe58d
+          name: 'Shutdown Event Log'
+          type: ZABBIX_ACTIVE
+          key: 'eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip]'
+          delay: 30m
+          history: 365d
+          trends: '0'
+          value_type: LOG
+          tags:
+            - tag: Application
+              value: Status
+          triggers:
+            - uuid: 156e3e9599fa44d7833f58d6df5a60be
+              expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"29")=1 and logseverity(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip])=4'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"6006")=1'
+              name: 'Windows Fast Startup issue detected in EventLog'
+              opdata: '{{ITEM.VALUE}.regsub("([\s\S]*)", \1)}'
+              priority: HIGH
+              description: |
+                Windows might not properly shutdown, this can lead to system corruption if repeated.
+                Make sure your Windows drivers/BIOS are up-to-date or turn off Fast Startup.
+                You can manually close this problem or wait the next proper shutdown.
+              manual_close: 'YES'
+            - uuid: 29ab34e5bd7c439792a514deb87f9750
+              expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"41")=1'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"6006")=1'
+              name: 'Windows shutdown was dirty/improper'
+              opdata: '{{ITEM.VALUE}.regsub("([\s\S]*)", \1)}'
+              priority: AVERAGE
+              description: |
+                Windows could not properly shutdown, this can lead to system corruption if repeated.
+                You can manually close this problem or wait the next proper shutdown.
+              manual_close: 'YES'
+            - uuid: 7bb00641dfd34acebb2b993654f56b8b
+              expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"6008")=1'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"6006")=1'
+              name: 'Windows shutdown was unexpected'
+              opdata: '{{ITEM.VALUE}.regsub("([\s\S]*)", \1)}'
+              priority: AVERAGE
+              description: |
+                Not expected is not the same as not completed!
+                You can manually close this problem or wait the next proper shutdown.
+              manual_close: 'YES'
+              dependencies:
+                - name: 'Windows shutdown was dirty/improper'
+                  expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"41")=1'
+                  recovery_expression: 'logeventid(/Futur-Tech Module Windows shutdown/eventlog[System,,,,^(20|29|33|41|42|109|172|1074|6005|6006|6008|6009)$,,skip],,"6006")=1'
+      tags:
+        - tag: Futur-Tech
